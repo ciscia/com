@@ -15,10 +15,10 @@ int main(int argc, const char *argv[])
     oal_main_init();
     oam_main_init();
     
-    oam_log_err("hello=10\n");
-    oam_log_warn("hello=10\n");
-    oam_log_hpy("hello=10\n");
-    oam_log_dbg("hello=10\n");
+    oam_log_err("hello=10");
+    oam_log_wrn("hello=10");
+    oam_log_hpy("hello=10");
+    oam_log_dbg("hello=10");
 
     return 0;
 }

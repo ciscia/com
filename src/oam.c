@@ -15,23 +15,25 @@ u32 oam_main_init(void)
     return  0;
 }
 
-const char *g_oam_color_table[] =
+const char *g_oam_color_table[][4] =
 {
-    "\033[0;31m[ERR]",  // 31=RED
-    "\033[0;33m[WRN]",  // 33=YELLOw
-    "\033[0;32m[HPY]",  // 32=GREEN
-    "\033[0;30m[DBG]",  // 30=NONE
+    {               // NO COLOR
+        "[ERR]",  
+        "[WRN]",  
+        "[HPY]",  
+        "[DBG]",  
+    },
+    {
+        "\033[0;31m[ERR]",  // 31=RED
+        "\033[0;33m[WRN]",  // 33=YELLOw
+        "\033[0;32m[HPY]",  // 32=GREEN
+        "\033[0;30m[DBG]",  // 30=NONE
+    },
 };
-const char *g_oam_nocolor_table[] =
+void oam_log(const char *file, u32 line, u32 level, const char* fmt, ...) 
 {
-    "[ERR]",  
-    "[WRN]",  
-    "[HPY]",  
-    "[DBG]",  
-};
+    u32     idx = g_oam_color ? 1 : 0;
 
-void oam_log(u32 level, const char* fmt, ...) 
-{
     va_list args;
 
     va_start(args, fmt);
@@ -45,17 +47,9 @@ void oam_log(u32 level, const char* fmt, ...)
         level = OAM_LOG_LEVEL_ERR;
     }
 
-    if (g_oam_color)
-    {
-        printf("%s", g_oam_color_table[level]);   // 1 = RED 2=yello 3=green 4=none
-        vprintf(fmt, args);
-        printf("\033[m");  // Resets the terminal to default.
-    }
-    else
-    {
-        printf("%s", g_oam_nocolor_table[level]); 
-        vprintf(fmt, args);
-    }
+    fprintf(stderr, "%s%s:%d::", g_oam_color_table[idx][level], file, line); 
+    vfprintf(stderr, fmt, args);
+    fprintf(stderr, "%s", g_oam_color ? "\033[m\n" : "\n");
 
     va_end(args);
 }
